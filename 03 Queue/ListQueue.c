@@ -20,6 +20,7 @@ typedef PtrToQNode Queue;
 Queue CreateQueue(int MaxSize) {
   Queue Q = (Queue)malloc(sizeof(struct QNode));
   Q->MaxSize = MaxSize;
+  Q->Front = Q->Rear = (Position)malloc(sizeof(struct Node));
   return Q;
 }
 
@@ -62,17 +63,16 @@ ElementType DeleteQ(Queue Q) {
 
 int Length(Queue Q) {
   int count = 0;
-  for (Position p = Q->Front; p != Q->Rear + 1; p++) {
+  for (Position p = Q->Front; p != Q->Rear; p = p->Next) {
     count++;
-    p = p->Next;
   }
   return count;
 }
 
 void PrintQueue(Queue Q) {
-  if(!Q->Front || !Q->Rear)
+  if (!Q->Front || !Q->Rear)
     return;
-  for(Position p = Q->Front; p != Q->Rear; p++) {
+  for (Position p = Q->Front->Next; p != Q->Rear; p = p->Next) {
     printf("%d ", p->Data);
   }
   printf("%d\n", Q->Rear->Data);
@@ -81,11 +81,15 @@ void PrintQueue(Queue Q) {
 int main() {
   Queue Q = CreateQueue(10);
   int arr[] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
-  PrintQueue(Q);
 
   for (int i = 0; i < Q->MaxSize; i++) {
     AddQ(Q, arr[i]);
   }
+  PrintQueue(Q);
+
+  printf("%d\n", Length(Q));
+
+  DeleteQ(Q);
   PrintQueue(Q);
 
   return 0;
